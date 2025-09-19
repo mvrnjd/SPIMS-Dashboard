@@ -1,0 +1,27 @@
+---
+title: "SPIMS Submission Confirmation"
+output: pdf_document
+params:
+  user_name: ""
+  applicant_code: ""
+  school1: ""
+  school2: ""
+  school3: ""
+---
+Dear Beneficiary Applicant,
+
+This electronically generated document serves as the official receipt for your submission of school preferences for SPIMS. The indicated preferences are not final or binding. **The Schools Division Office reserves the right to make necessary adjustments based on the latest teacher requirement analysis and specialization needs.**
+
+Kindly see the details of your submission below:
+
+**Name:** `r params$user_name`  
+**Applicant Code:** `r params$applicant_code`  
+
+**School Preferences:**  
+1. `r params$school1`  
+2. `r params$school2`  
+3. `r params$school3` 
+
+**Date:** `r format(Sys.time())`
+
+Thank you for your submission! 

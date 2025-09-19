@@ -1,0 +1,12 @@
+name: SPIMSv2
+title: SPIMSv2
+username: etmurphy
+account: etmurphy
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 14965362
+bundleId: 10598542
+url: https://etmurphy.shinyapps.io/SPIMSv2/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

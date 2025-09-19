@@ -1,0 +1,133 @@
+Province,applicant_code,Name,Level
+ABRA,182034,Maria Santos,Elementary School
+BOHOL,490173,John Dela Cruz,Elementary School
+ZAMBOANGA DEL SUR,SP2025AV061494,Anne Villanueva,Elementary School
+ILOCOS SUR,384902,Peter Ramos,Elementary School
+CAMARINES NORTE,285910,Nicole Garcia,Elementary School
+AGUSAN DEL SUR,683741,Bryan Aquino,Elementary School
+CAVITE,379261,Carla Mendoza,Elementary School
+PALAWAN,712930,Kevin Hernandez,Elementary School
+LAGUNA,901247,Isabel Torres,Elementary School
+ILOILO,247135,Daniel Reyes,Elementary School
+NEGROS OCCIDENTAL,130498,Paula Fernandez,Elementary School
+ZAMBOANGA DEL NORTE,832105,Edward Lim,Elementary School
+SURIGAO DEL NORTE,678104,Joan Pascual,Elementary School
+NUEVA VIZCAYA,456198,Richard Gonzales,Elementary School
+SORSOGON,147235,Katrina Cruz,Elementary School
+AURORA,238145,Marvin Bautista,Elementary School
+MASBATE,831476,Diane Rivera,Elementary School
+ROMBLON,198746,Joshua Castillo,Elementary School
+TARLAC,623904,Andrea Navarro,Elementary School
+GUIMARAS,943820,Leo Salazar,Elementary School
+CATANDUANES,237891,Faith Enriquez,Elementary School
+BENGUET,129048,Anthony Tan,Elementary School
+BUKIDNON,758310,Hannah Morales,Elementary School
+WESTERN SAMAR,803492,Carlo Evangelista,Elementary School
+QUEZON,284701,Grace Santos,Elementary School
+KALINGA,473219,Mark Lozano,Elementary School
+NORTHERN SAMAR,619084,Erika Ocampo,Elementary School
+ZAMBALES,182309,Neil Robles,Elementary School
+PANGASINAN,849120,Stephanie Uy,Elementary School
+CAMIGUIN,537192,Paolo Bautista,Elementary School
+APAYAO,713504,Jenny Mercado,Elementary School
+LEYTE,498302,Martin Yambao,Elementary School
+ALBAY,361284,Karla Dimaculangan,Elementary School
+AGUSAN DEL NORTE,943201,Ramon Gonzaga,Elementary School
+MISAMIS OCCIDENTAL,842073,Cherry Abad,Elementary School
+MOUNTAIN PROVINCE,124083,Darren Estrella,Elementary School
+LA UNION,493218,Melchor Gutierrez,Elementary School
+LANAO DEL NORTE,273081,Thea Santiago,Elementary School
+BATAAN,340982,Jim Alvarado,Elementary School
+COMPOSTELA VALLEY,982710,Pamela Dizon,Elementary School
+NCR 1ST DISTRICT,609284,Ryan Estrada,Elementary School
+NCR 3RD DISTRICT,580314,Aileen Roxas,Elementary School
+NCR 2ND DISTRICT,731209,Marco Valenzuela,Elementary School
+DAVAO DEL SUR,431298,Bianca Ramos,Elementary School
+DAVAO ORIENTAL,580391,Luis Olivares,Elementary School
+DAVAO OCCIDENTAL,983214,Kristel Magpantay,Elementary School
+SOUTH COTABATO,239184,Miguel Bernardo,Elementary School
+ISABELA,390281,Celeste Rivera,Elementary School
+IFUGAO,294081,Oliver Salinas,Elementary School
+BATANGAS,193284,Camille Alcantara,Elementary School
+BATANES,841392,Arnel De Jesus,Elementary School
+CEBU,309481,Angel Lozano,Elementary School
+IL0COS NORTE,578291,Nathaniel Cruz,Elementary School
+SOUTHERN LEYTE,620398,Andrea Reyes,Elementary School
+RIZAL,712098,Kyle Mendez,Elementary School
+SIQUIJOR,980432,Jean Francisco,Elementary School
+MOUNTAIN PROVINCE,394283,Fredric Martinez,Elementary School
+NUEVA ECIJA,684102,Eloisa Fabian,Elementary School
+ANTIQUE,238419,Vince Relampagos,Elementary School
+ORIENTAL MINDORO,481203,Marie Javier,Elementary School
+OCCIDENTAL MINDORO,583019,Carlos Ramos,Elementary School
+SURIGAO DEL SUR,729384,Daniella Mendoza,Elementary School
+SARANGANI,930184,Andre Paredes,Elementary School
+QUIRINO,294013,Joan Atienza,Elementary School
+WESTERN SAMAR,184902,Benjie Reyes,Elementary School
+CAPIZ,381049,Ivy Manalo,Elementary School
+CITY OF ISABELA,489203,Liza Sarmiento,Elementary School
+CAMARINES SUR,109284,Arman Fajardo,Elementary School
+DAVAO DEL NORTE,649203,Myla Buenaventura,Elementary School
+NEGROS ORIENTAL,501283,Daniel Robles,Elementary School
+MARINDUQUE,218930,Cecille Valencia,Elementary School
+ABRA,902134,Glen Ramos,Elementary School
+BOHOL,190382,Kevin Bernardo,Elementary School
+CAGAYAN,208319,Louella Ignacio,Elementary School
+TAWI-TAWI,391284,Hazel Francisco,Elementary School
+COTABATO,581209,Henry Lorenzo,Elementary School
+ZAMBOANGA SIBUGAY,309182,Meryn Arcega,Elementary School
+APAYAO,143210,Bryan Ilagan,Elementary School
+QUEZON,841309,Juliette Luna,Elementary School
+SULTAN KUDARAT,238191,Ramil Castillo,Elementary School
+LAGUNA,893010,Iris Montenegro,Elementary School
+ILOILO,512938,Janine Lopez,Elementary School
+BATANGAS,214398,Carlo Fernandez,Elementary School
+LEYTE,983142,Denise Ramos,Elementary School
+ZAMBOANGA SIBUGAY,731204,Gabriel Alvarado,Elementary School
+LAGUNA,610928,Raquel Gomez,Elementary School
+BUKIDNON,320481,Enrico Cruz,Elementary School
+SORSOGON,820471,Melissa Torres,Elementary School
+NUEVA ECIJA,219384,Edwin Mercado,Elementary School
+AKLAN,781204,Shiela Galvez,Elementary School
+ILOCOS NORTE,503918,Rogelio Reyes,Elementary School
+MISAMIS OCCIDENTAL,408192,Karen Lim,Elementary School
+BENGUET,930284,Angelo Pascual,Elementary School
+SIQUIJOR,184927,Clarisse Villanueva,Elementary School
+MOUNTAIN PROVINCE,124983,Joel Aguirre,Elementary School
+ILOILO,572183,Liza Aquino,Elementary School
+ZAMBOANGA DEL SUR,238412,Rico Santiago,Elementary School
+LANAO DEL NORTE,349182,Monica Robles,Elementary School
+QUEZON,481230,Paulo Javier,Elementary School
+GUIMARAS,691284,Ivy De Castro,Elementary School
+OCCIDENTAL MINDORO,578103,Daniel Miranda,Elementary School
+AGUSAN DEL SUR,312984,Vicky Hernandez,Elementary School
+CAMARINES SUR,481209,Ronan Mendoza,Elementary School
+SURIGAO DEL SUR,649283,Charmaine Llamas,Elementary School
+PANGASINAN,903184,Fred Garcia,Elementary School
+BULACAN,739281,Thea Domingo,Elementary School
+IFUGAO,902183,Julius dela Peña,Elementary School
+ZAMBOANGA DEL NORTE,581042,Nina Labrador,Elementary School
+MARINDUQUE,302819,Bryan Lopez,Elementary School
+ROMBLON,483920,Carmela Rivera,Elementary School
+EASTERN SAMAR,904318,Jerson Bautista,Elementary School
+ANTIQUE,738129,Alyssa Ocampo,Elementary School
+CAMARINES NORTE,182039,Noel Gutierrez,Elementary School
+RIZAL,193820,Patricia Cortez,Elementary School
+CAPIZ,620194,Ronald Tan,Elementary School
+CATANDUANES,402819,Janelle Ignacio,Elementary School
+CEBU,248391,Marvin Sy,Elementary School
+KALINGA,581042,Cristine Rosales,Elementary School
+AGUSAN DEL NORTE,914283,Josephine Villaruel,Elementary School
+COTABATO,580218,Dominic Ramos,Elementary School
+COMPOSTELA VALLEY,204983,Marian Silva,Elementary School
+APAYAO,403981,Patrick Estrada,Elementary School
+SOUTHERN LEYTE,193847,Pauline Yu,Elementary School
+SOUTH COTABATO,902381,Albert Gallardo,Elementary School
+DINAGAT ISLANDS,579284,Shane Perez,Elementary School
+ILOCOS SUR,401982,Emil Sanchez,Elementary School
+ISABELA,790483,Kimberly Navarro,Elementary School
+BOHOL,192384,Oliver Reyes,Elementary School
+ALBAY,503182,Lorraine Espino,Elementary School
+TAWI-TAWI,684123,Cedric Manalo,Elementary School
+DAVAO ORIENTAL,203948,Jenna Vergara,Elementary School
+SARANGANI,129384,Allan Lagman,Elementary School
