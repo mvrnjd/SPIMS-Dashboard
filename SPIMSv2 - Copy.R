@@ -111,12 +111,12 @@ ui <- fluidPage(
   
   tags$head(
     tags$style(HTML("
-      /* Full page gradient background */
-      html, body {
-        height: 100%;
-        margin: 0;
-        background: linear-gradient(135deg, #003399 0%, #b22222 60%, #ffcc00 100%);
-      }
+    /* Full page gradient background */
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: linear-gradient(135deg, #003399 0%, #b22222 100%);
+    }
 
       /* Scope the flex centering ONLY to login panel */
       #login_panel_wrapper {
@@ -234,37 +234,35 @@ server <- function(input, output, session) {
   
   # --- Reactive Values & Observers ---
   # Observe the authentication status
+  # --- Reactive Values & Observers ---
+  # Observe the authentication status
   observe({
     auth_status <- credentials()$user_auth
+    
+    # When authenticated, hide the login wrapper and show the appropriate content.
     if (auth_status) {
+      shinyjs::hide("login_panel_wrapper") # <--- ADD THIS LINE
+      
       # User is authenticated. Let's get their details.
       user_info <- credentials()$info # This is a tibble with the user's row
       
       # Ensure user_info is available and has the username
-      # (It should if auth_status is TRUE and your user_base is set up correctly)
       if (!is.null(user_info) && "user" %in% names(user_info)) {
         current_username <- user_info$user # Get the username
         
-        # --- Always hide the login panel when authenticated ---
-        shinyjs::hide(selector = "#login") # Or shinyjs::hide(id = "login-login_ui")
         # --- Conditional logic based on username ---
-        if (current_username == "iamdeped") { # <<<< Your specific username condition
-          # Authenticated AND username is "user1"
+        if (current_username == "iamdeped") { 
           shinyjs::show("main_content")
           shinyjs::hide("mgmt_content")
           shinyjs::hide("spims_content")
           shinyjs::hide("spims_admin")
         } else if (current_username == "depedadmin") {
-          # Authenticated BUT username is NOT "user1"
-          # This could be user2, user3, etc.
           shinyjs::show("mgmt_content")
           shinyjs::hide("main_content")
           shinyjs::hide("spims_content")
           shinyjs::hide("spims_admin")
-          # output$generic_secure_data <- renderPrint({"Generic secure data for other users..."})
         } else if (current_username == 'spimsuser') {
-          shinyjs::hide("login_panel")
-          shinyjs::show("spims_content")
+          shinyjs::show("spims_content") # This is what you want for 'spimsuser'
           shinyjs::hide("mgmt_content")
           shinyjs::hide("main_content")
           shinyjs::hide("spims_admin")
@@ -273,14 +271,17 @@ server <- function(input, output, session) {
           shinyjs::hide("mgmt_content")
           shinyjs::hide("main_content")
           shinyjs::show("spims_admin")
-        }}}
-    else {
+        }
+      }
+    } else {
       # User is NOT authenticated (e.g., after logout or initially)
-      shinyjs::show(selector = "#login")
+      shinyjs::show("login_panel_wrapper") # <--- ADD THIS LINE back for logout/initial state
       shinyjs::hide("main_content")
       shinyjs::hide("mgmt_content")
       shinyjs::hide("spims_content")
       shinyjs::hide("spims_admin")
+      
+      # Reset inputs on logout
       updateTextInput(session, "user_prov", value = "")
       updateTextInput(session, "user_mun", value = "")
       updateTextInput(session, "user_mun_2", value = "")
@@ -295,8 +296,10 @@ server <- function(input, output, session) {
       updateTextInput(session, "AdminMun", value = "")
       updateTextInput(session, "AdminLevel", value = "")
       updateTextInput(session, "AdminRegion", value = "")
-    }})
+    }
+  })
   # output$some_output_for_user1 <- renderText({"Content for user1..."})
+  
   
   
   output$STRIDE3 <- renderUI({
