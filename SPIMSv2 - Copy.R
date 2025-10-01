@@ -51,6 +51,8 @@ init_db <- function() {
     school1_id TEXT,
     school2_id TEXT,
     school3_id TEXT,
+    school4_id TEXT,
+    school5_id TEXT,
     user_prov TEXT,
     user_mun TEXT,
     user_level TEXT,        -- FIX: TEXT (not TEST)
@@ -111,12 +113,60 @@ ui <- fluidPage(
   
   tags$head(
     tags$style(HTML("
-    /* Full page gradient background */
+    /* Add this to your tags$style(HTML(...)) block in ui.R */
+.navbar {
+    z-index: 9999 !important; /* Ensures the navbar is on top of everything */
+}
+/* Ensure the body can scroll if needed */
+html, body {
+    height: 100%;
+    margin: 0;
+    background-color: transparent;
+    overflow-x: hidden; /* Allows vertical scroll but prevents horizontal if possible */
+}
+    
+    /* 1. Reset Full page background and remove filter/shadow from body */
     html, body {
       height: 100%;
       margin: 0;
-      background: linear-gradient(135deg, #003399 0%, #b22222 100%);
+      /* Ensure the body is transparent to show the background div */
+      background-color: transparent; 
+       
     }
+    
+    /* 2. Dedicated Faded Background Element (NEW) */
+    #faded_background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw; 
+      height: 100vh; 
+      z-index: -1; /* Puts it behind everything */
+      
+      /* Set the background image */
+      background-image: url('bg_pic.jpg'); /* ⚠️ REPLACE THIS URL */
+      background-size: cover;
+      background-position: center bottom;
+      
+      /* Apply Grayscale filter (black and white) */
+      filter: grayscale(100%);
+      
+      /* Apply a subtle, faded dark blue color overlay (using a pseudo-element) */
+    }
+    
+    /* Create the blue color overlay using a pseudo-element */
+    #faded_background::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 51, 153, 0.2); /* Semi-transparent blue */
+        z-index: 0; /* Sits on top of the image in this div */
+    }
+
+      /* -- EXISTING LOGIN PANEL CSS REMAINS UNCHANGED -- */
 
       /* Scope the flex centering ONLY to login panel */
       #login_panel_wrapper {
@@ -128,6 +178,7 @@ ui <- fluidPage(
 
       /* Login panel */
       #login_panel {
+        /* Keep the login panel background opaque white so the text is readable */
         background: rgba(255, 255, 255, 0.95);
         padding: 30px 50px;
         border-radius: 20px;
@@ -176,12 +227,15 @@ ui <- fluidPage(
   
   shinyjs::useShinyjs(),
   
+  # NEW: The dedicated background div for the filtered image
+  div(id = "faded_background"), 
+  
   # Wrapper div for centering login ONLY
   div(
     id = "login_panel_wrapper",
     div(
       id = "login_panel",
-      tags$img(src = "deped_logo.png", id = "login_logo"),  # put logo in /www
+      tags$img(src = "deped_logo.png", id = "login_logo"), # put logo in /www
       shinyauthr::loginUI(
         id = "login",
         title = "Please Log In",
@@ -193,18 +247,32 @@ ui <- fluidPage(
     )
   ),
   
+  # NEW: Permanent container for the Logout button
+  # It must be visible when the STRIDE content is visible.
+  shinyjs::hidden(
+    div(
+      id = "logout_div",
+      style = "position: absolute; top: 10px; right: 20px; z-index: 10000;", # Position it clearly
+      shinyauthr::logoutUI(
+        id = "logout",
+        label = "Log Out",
+        class = "btn btn-danger btn-sm"
+      )
+    )
+  ),
+  
+  # Your main content outputs:
   shinyjs::hidden(div(id = "main_content", uiOutput("STRIDE1"))),
   shinyjs::hidden(div(id = "mgmt_content", uiOutput("STRIDE2"))),
   shinyjs::hidden(
     div(
       id = "spims_content", 
       uiOutput("STRIDE3"),
-      style = "padding: 10px;"  # no margin-top here, so no gap when hidden
+      style = "padding: 10px;" 
     )
   ),
   shinyjs::hidden(div(id = "spims_admin", uiOutput("STRIDE4")))
 )
-
 
 
 
@@ -239,12 +307,19 @@ server <- function(input, output, session) {
   observe({
     auth_status <- credentials()$user_auth
     
-    # When authenticated, hide the login wrapper and show the appropriate content.
+    # Define all content IDs including the new logout container
+    all_content_ids <- c("main_content", "mgmt_content", "spims_content", "spims_admin")
+    all_content_ids_and_logout <- c(all_content_ids, "logout_div") # Include the new logout container
+    
+    # Hide all content and the logout button initially/on logout
+    sapply(all_content_ids_and_logout, shinyjs::hide)
+    
     if (auth_status) {
-      shinyjs::hide("login_panel_wrapper") # <--- ADD THIS LINE
+      shinyjs::hide("login_panel_wrapper")
+      shinyjs::show("logout_div") # <--- NEW: Show the floating logout button
       
       # User is authenticated. Let's get their details.
-      user_info <- credentials()$info # This is a tibble with the user's row
+      user_info <- credentials()$info 
       
       # Ensure user_info is available and has the username
       if (!is.null(user_info) && "user" %in% names(user_info)) {
@@ -292,6 +367,8 @@ server <- function(input, output, session) {
       updateTextInput(session, "school1", value = "")
       updateTextInput(session, "school2", value = "")
       updateTextInput(session, "school3", value = "")
+      updateTextInput(session, "school4", value = "")
+      updateTextInput(session, "school5", value = "")
       updateTextInput(session, "AdminProv", value = "")
       updateTextInput(session, "AdminMun", value = "")
       updateTextInput(session, "AdminLevel", value = "")
@@ -304,17 +381,19 @@ server <- function(input, output, session) {
   
   output$STRIDE3 <- renderUI({
     # Custom styling
+    tags$div(
+      style = "width: 100%;",
     page_navbar(title = div(
       tags$span(
         strong("SPIMS Application Portal"),
-        style = "font-size: 1em; margin-bottom: 0.2em;"),"",
+        style = "font-family: 'Poppins'; font-size: 1em; margin-bottom: 0.2em;"),"",
     ),
     nav_spacer(),
     nav_panel(strong("School Preference Selection"), fluidRow(
       layout_columns(
         card(
           card_header(
-            div(strong("Applicant School Preferences"), style = "font-family: Century Gothic; font-size: 30px; color: #111111; padding: 1px; text-align: center;"))
+            div(strong("Applicant School Preferences"), style = "font-family: 'Poppins'; font-size: 30px; color: #111111; padding: 1px; text-align: center;"))
         ),
         card(
           card_header(
@@ -374,9 +453,11 @@ server <- function(input, output, session) {
              ),
              fluidRow(
                column(width=5, 
-                      selectInput("school1", "First Preference School:", choices = c("")),
-                      selectInput("school2", "Second Preference School:", choices = c("")),
-                      selectInput("school3", "Third Preference School:", choices = c("")),
+                      selectInput("school1", "First Preferred School:", choices = c("")),
+                      selectInput("school2", "Second Preferred School:", choices = c("")),
+                      selectInput("school3", "Third Preferred School:", choices = c("")),
+                      selectInput("school4", "Fourth Preferred School:", choices = c("")),
+                      selectInput("school5", "Fifth Preferred School:", choices = c("")),
                       actionButton("clear_selections", "Clear All Selections", class = "btn-danger")
                ),
                column(width=7,
@@ -752,7 +833,8 @@ server <- function(input, output, session) {
         )
       )
     )
-    ) # Custom styling
+    )
+    )# Custom styling
   })
   
   
@@ -1116,7 +1198,7 @@ server <- function(input, output, session) {
     req(clicked_school)
     
     isolate({
-      current <- c(input$school1, input$school2, input$school3)
+      current <- c(input$school1, input$school2, input$school3, input$school4, input$school5)
       current[current == ""] <- NA
       
       if (clicked_school %in% current) {
@@ -1126,10 +1208,14 @@ server <- function(input, output, session) {
           updateSelectInput(session, "school2", selected = "")
         } else if (clicked_school == input$school3) {
           updateSelectInput(session, "school3", selected = "")
+        } else if (clicked_school == input$school4) {
+          updateSelectInput(session, "school4", selected = "")
+        } else if (clicked_school == input$school5) {
+          updateSelectInput(session, "school5", selected = "")
         }
       } else {
         first_empty <- which(is.na(current))[1]
-        if (!is.na(first_empty)) {
+        if (!is.na(first_empty)&& first_empty <= 5) {
           updateSelectInput(session, paste0("school", first_empty), selected = clicked_school)
         }
       }
@@ -1141,7 +1227,7 @@ server <- function(input, output, session) {
     req(data)
     req("SchoolName" %in% names(data))
     
-    selected <- c(input$school1, input$school2, input$school3)
+    selected <- c(input$school1, input$school2, input$school3, input$school4, input$school5)
     selected <- selected[selected != ""]
     
     # Dynamically override color
@@ -1192,6 +1278,8 @@ server <- function(input, output, session) {
     updateSelectInput(session, "school1", selected = "")
     updateSelectInput(session, "school2", selected = "")
     updateSelectInput(session, "school3", selected = "")
+    updateSelectInput(session, "school4", selected = "")
+    updateSelectInput(session, "school5", selected = "")
     
     data <- mainreactsch()
     req(data)
@@ -1291,10 +1379,43 @@ server <- function(input, output, session) {
     # Use an empty string to ensure nothing is selected
     updateSelectInput(session, "school3", choices = remaining_for_3, selected = "")
   })
+  
+  # 4. NEW: Updates 'school4' when 'school3' changes.
+  observeEvent(input$school3, {
+    school_data <- mainreactsch()
+    req(nrow(school_data) > 0, input$school1, input$school2, input$school3)
+    
+    selected_schools <- c(input$school1, input$school2, input$school3)
+    
+    filtered_data_4 <- school_data %>%
+      filter(!SchoolID %in% selected_schools)
+    
+    remaining_for_4 <- setNames(filtered_data_4$SchoolID, filtered_data_4$SchoolName)
+    
+    updateSelectInput(session, "school4", choices = remaining_for_4, selected = "")
+  })
+  
+  # 5. NEW: Updates 'school5' when 'school4' changes.
+  observeEvent(input$school4, {
+    school_data <- mainreactsch()
+    req(nrow(school_data) > 0, input$school1, input$school2, input$school3, input$school4)
+    
+    selected_schools <- c(input$school1, input$school2, input$school3, input$school4)
+    
+    filtered_data_5 <- school_data %>%
+      filter(!SchoolID %in% selected_schools)
+    
+    remaining_for_5 <- setNames(filtered_data_5$SchoolID, filtered_data_5$SchoolName)
+    
+    updateSelectInput(session, "school5", choices = remaining_for_5, selected = "")
+  })
+  
   # Render UI inputs
-  selectInput("school1", "First Preference School:", choices = NULL, selected = NULL)
-  selectInput("school2", "Second Preference School:", choices = NULL, selected = NULL)
-  selectInput("school3", "Third Preference School:", choices = NULL, selected = NULL)
+  selectInput("school1", "First Preferred School:", choices = NULL, selected = NULL)
+  selectInput("school2", "Second Preferred School:", choices = NULL, selected = NULL)
+  selectInput("school3", "Third Preferred School:", choices = NULL, selected = NULL)
+  selectInput("school4", "Fourth Preferred School:", choices = NULL, selected = NULL)
+  selectInput("school5", "Fifth Preferred School:", choices = NULL, selected = NULL)
   
   # DB connection helper
   get_db_conn <- function() {
@@ -1325,6 +1446,8 @@ server <- function(input, output, session) {
             tags$p(strong("School Preference 1: "), get_school_name(input$school1)),
             tags$p(strong("School Preference 2: "), get_school_name(input$school2)),
             tags$p(strong("School Preference 3: "), get_school_name(input$school3)),
+            tags$p(strong("School Preference 4: "), get_school_name(input$school4)),
+            tags$p(strong("School Preference 5: "), get_school_name(input$school5)),
             tags$hr(),
             "Are you sure you want to submit? You cannot change your choices once submitted."
           ),
@@ -1349,12 +1472,12 @@ server <- function(input, output, session) {
         conn <- get_db_conn()
         
         # Save submission with the correct column names
-        dbExecute(conn, "INSERT INTO entries (user_name, applicant_code, school1_id, school2_id, school3_id, user_prov, user_mun, user_level)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                  params = list(input$user_name, input$applicant_code, input$school1, input$school2, input$school3, input$user_prov, input$user_mun, input$user_level))
+        dbExecute(conn, "INSERT INTO entries (user_name, applicant_code, school1_id, school2_id, school3_id, school4_id, school5_id, user_prov, user_mun, user_level)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                  params = list(input$user_name, input$applicant_code, input$school1, input$school2, input$school3, input$school4, input$school5, input$user_prov, input$user_mun, input$user_level))
         
         # Increment Counts
-        chosen_schools <- c(input$school1, input$school2, input$school3)
+        chosen_schools <- c(input$school1, input$school2, input$school3, input$school4, input$school5)
         
         school_info <- school %>%
           filter(SchoolID %in% chosen_schools) %>%
@@ -1403,9 +1526,9 @@ server <- function(input, output, session) {
     input$submitBtn  # triggers refresh
     conn <- get_db_conn()
     data <- tryCatch({
-      dbGetQuery(conn, "SELECT user_name, applicant_code, school1, school2, school3, user_prov, user_mun, user_level, timestamp FROM entries ORDER BY timestamp")
+      dbGetQuery(conn, "SELECT user_name, applicant_code, school1, school2, school3, school4, school5, user_prov, user_mun, user_level, timestamp FROM entries ORDER BY timestamp")
     }, error = function(e) {
-      status(paste("Error loading data:", e$message))
+      showNotification(paste("Error loading data:", e$message), type = "error")
       data.frame()
     }, finally = {
       if (dbIsValid(conn)) dbDisconnect(conn)
@@ -1417,7 +1540,7 @@ server <- function(input, output, session) {
     conn <- get_db_conn()
     counts_df <- tryCatch({
       dbGetQuery(conn, "
-      SELECT school, municipality, number_applicants, first_pref_schools
+      SELECT school_id, municipality, number_applicants, first_pref_schools
       FROM school_counts
     ")
     }, error = function(e) {
@@ -1426,6 +1549,10 @@ server <- function(input, output, session) {
     }, finally = {
       if (dbIsValid(conn)) dbDisconnect(conn)
     })
+    
+    # ADD THIS CONVERSION STEP ⬇️
+    counts_df <- counts_df %>% 
+      mutate(school_id = as.integer(school_id)) 
     
     # Join with the school dataset to get Region, Province, etc.
     full_data <- counts_df %>%
@@ -1554,6 +1681,8 @@ server <- function(input, output, session) {
         school1_name <- get_school_name(input$school1, school_data)
         school2_name <- get_school_name(input$school2, school_data)
         school3_name <- get_school_name(input$school3, school_data)
+        school4_name <- get_school_name(input$school4, school_data)
+        school5_name <- get_school_name(input$school5, school_data)
         
         rmarkdown::render(
           input = temp_rmd,
@@ -1565,7 +1694,9 @@ server <- function(input, output, session) {
             # Pass the new name variables to the R Markdown document
             school1 = school1_name,
             school2 = school2_name,
-            school3 = school3_name
+            school3 = school3_name,
+            school4 = school4_name,
+            school5 = school5_name
           ),
           envir = new.env(parent = globalenv())
         )
