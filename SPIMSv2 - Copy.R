@@ -48,11 +48,11 @@ init_db <- function() {
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_name TEXT,
     applicant_code TEXT,
-    school1_id TEXT,
-    school2_id TEXT,
-    school3_id TEXT,
-    school4_id TEXT,
-    school5_id TEXT,
+    school1 TEXT,
+    school2 TEXT,
+    school3 TEXT,
+    school4 TEXT,
+    school5 TEXT,
     user_prov TEXT,
     user_mun TEXT,
     user_level TEXT,        -- FIX: TEXT (not TEST)
@@ -113,115 +113,240 @@ ui <- fluidPage(
   
   tags$head(
     tags$style(HTML("
-    /* Add this to your tags$style(HTML(...)) block in ui.R */
+        /* ------------------------------------------------------------------ */
+        /* --- BASE FIXES AND LOGIN STYLES (Kept as is) --- */
+        /* ------------------------------------------------------------------ */
+        .navbar { z-index: 9999 !important; }
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: transparent;
+            overflow-x: hidden;
+            overflow-y: hidden; /* Hidden until content is shown */
+        }
+        #faded_background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-image: url('bg_pic.jpg');
+            background-size: cover;
+            background-position: center bottom;
+            filter: grayscale(100%);
+        }
+        #faded_background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 51, 153, 0.2);
+            z-index: 0;
+        }
+
+        /* Login Label Fixes */
+        #login_panel .form-group:nth-child(1),
+        #login_panel .form-group:nth-child(2) { text-align: left !important; }
+        label[for='login-user_name'], label[for='login-password'] {
+            text-align: left !important;
+            display: block !important;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #003399;
+        }
+        
+        /* Login Panel Styling (Kept as is) */
+        #login_panel_wrapper { height: 100vh; display: flex; justify-content: center; align-items: center; }
+        #login_panel { background: rgba(255, 255, 255, 0.95); padding: 30px 50px; border-radius: 20px; width: 420px; text-align: center; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25); }
+        #login_logo { width: 80px; margin-bottom: 15px; }
+        #login_panel h2 { font-weight: 600 !important; font-size: 1.5rem !important; color: #003399 !important; margin-bottom: 20px !important; padding-top: 0 !important; margin-top: 0 !important; }
+        #login_panel input { border-radius: 10px; border: 1px solid #ccc; margin-bottom: 15px; }
+        #login_panel button { background: linear-gradient(90deg, #003399, #b22222); color: white; border-radius: 25px; padding: 10px 25px; font-weight: 600; transition: all 0.3s ease; border: none; }
+        #login_panel button:hover { background: linear-gradient(90deg, #b22222, #003399); box-shadow: 0px 4px 12px rgba(0,0,0,0.3); }
+
+        /* Scrollbar Fix (Kept as is) */
+        #main_content, #mgmt_content, #spims_content, #spims_admin { max-height: 100vh; overflow-y: auto !important; }
+        .content-shown body { overflow-y: auto !important; }
+        .container-fluid { padding-left: 0; padding-right: 0; }
+
+        /* ------------------------------------------------------------------ */
+/* 🔥 CRITICAL FIX: NAVIGATION BAR COLOR, TITLE, AND LINK VISIBILITY 🔥*/
+/* ------------------------------------------------------------------ */
+
+/* 1. Target the main Bootstrap Navigation Bar (for the Dark Blue Background) */
 .navbar {
-    z-index: 9999 !important; /* Ensures the navbar is on top of everything */
+    /* Force the dark blue background */
+    background-color: #003399 !important; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding-top: 5px; /* Adjust padding for height */
+    padding-bottom: 5px;
 }
-/* Ensure the body can scroll if needed */
-html, body {
-    height: 100%;
-    margin: 0;
-    background-color: transparent;
-    overflow-x: hidden; /* Allows vertical scroll but prevents horizontal if possible */
+
+/* 2. Target the main application title (SPIMS Application Portal) */
+/* This handles the title whether it's wrapped in <a> (like a logo) or a <span> */
+.navbar-brand, .app-title-text { 
+    font-size: 1.8rem !important;
+    font-weight: 900 !important; /* Extreme bold */
+    color: white !important; /* Make it white on the dark blue background */
+    margin-left: 50px; /* Align with the card content below */
 }
-    
-    /* 1. Reset Full page background and remove filter/shadow from body */
-    html, body {
-      height: 100%;
-      margin: 0;
-      /* Ensure the body is transparent to show the background div */
-      background-color: transparent; 
-       
-    }
-    
-    /* 2. Dedicated Faded Background Element (NEW) */
-    #faded_background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw; 
-      height: 100vh; 
-      z-index: -1; /* Puts it behind everything */
-      
-      /* Set the background image */
-      background-image: url('bg_pic.jpg'); /* ⚠️ REPLACE THIS URL */
-      background-size: cover;
-      background-position: center bottom;
-      
-      /* Apply Grayscale filter (black and white) */
-      filter: grayscale(100%);
-      
-      /* Apply a subtle, faded dark blue color overlay (using a pseudo-element) */
-    }
-    
-    /* Create the blue color overlay using a pseudo-element */
-    #faded_background::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 51, 153, 0.2); /* Semi-transparent blue */
-        z-index: 0; /* Sits on top of the image in this div */
-    }
 
-      /* -- EXISTING LOGIN PANEL CSS REMAINS UNCHANGED -- */
+/* 3. Style the Navigation Links (e.g., School Preference Selection) */
+.navbar-nav .nav-link {
+    /* Use white for contrast on the dark blue background */
+    color: white !important; 
+    font-weight: 500;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+    padding: 8px 15px !important;
+}
 
-      /* Scope the flex centering ONLY to login panel */
-      #login_panel_wrapper {
-        height: 100vh; /* full viewport height */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
+/* Style active/selected link */
+.navbar-nav .nav-link.active, .navbar-nav .nav-link.active:hover {
+    font-weight: 700 !important; 
+    color: #ffcc00 !important; /* Yellow/Gold for emphasis */
+    background-color: transparent !important;
+    border-bottom: 2px solid #ffcc00 !important; /* Underline the active tab */
+}
 
-      /* Login panel */
-      #login_panel {
-        /* Keep the login panel background opaque white so the text is readable */
-        background: rgba(255, 255, 255, 0.95);
-        padding: 30px 50px;
-        border-radius: 20px;
-        width: 420px;
-        text-align: center;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-      }
+/* Ensure the Logout button (if inside the navbar) is also visible */
+#logout_div {
+    top: 15px !important; /* Adjust position slightly lower */
+    right: 50px !important; /* Match card alignment */
+}
 
-      /* Logo */
-      #login_logo {
-        width: 80px;
-        margin-bottom: 15px;
-      }
+        /* ------------------------------------------------------------------ */
+        /* --- MAIN CONTENT CARD FIXES (Refined for Visibility/Alignment) --- */
+        /* ------------------------------------------------------------------ */
 
-      /* Title */
-      #login_panel h4 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-        color: #003399;
-        margin-bottom: 20px;
-      }
+        /* Apply unified styling to the main content wrapper */
+        #spims_content {
+            background-color: #f7f7f7; 
+            min-height: 100vh;
+        }
 
-      /* Inputs */
-      #login_panel input {
-        border-radius: 10px;
-        border: 1px solid #ccc;
-        margin-bottom: 15px;
-      }
+        /* Target the main content card */
+        .main-content-card { 
+            background-color: white;
+            padding: 30px;
+            margin: 20px 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
 
-      /* Button */
-      #login_panel button {
-        background: linear-gradient(90deg, #003399, #b22222);
-        color: white;
-        border-radius: 25px;
-        padding: 10px 25px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        border: none;
-      }
-      #login_panel button:hover {
-        background: linear-gradient(90deg, #b22222, #003399);
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.3);
-      }
+        /* 🎯 FIX: Align Applicant School Preferences Title */
+        .main-content-card h2 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #003399;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eeeeee;
+            margin-bottom: 30px;
+            /* Ensure alignment with the new header title styling */
+            padding-left: 0; 
+            padding-right: 0;
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        /* 🎯 FIX: Label Visibility Fix */
+        /* 1. Target all <label> elements inside the main content card */
+        .main-content-card label {
+            color: #333333 !important; /* Force a dark color */
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        /* 🎯 FIX: Step Borders and Header Styling */
+        /* 2. Emphasize Steps with Borders (Step Border Fix) */
+        .main-content-card .step-section {
+            padding: 25px 0 15px 0; 
+            border-top: 1px solid #e0e0e0;
+        }
+
+        /* Remove the top border from the very first step (Step 1) */
+        .main-content-card .step-section:first-of-type {
+            border-top: none;
+            padding-top: 0;
+        }
+
+        /* 3. Style the Step Headers and instructions */
+        .main-content-card h4 {
+            color: #003399 !important;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            margin-top: 0;
+        }
+        .main-content-card em {
+            display: block; 
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        /* 🎯 FIX: Input Alignment for Dropdowns vs Text Inputs */
+        /* Ensure all form elements (text, number, select) within a fluidRow are vertically aligned */
+        /* The inputs themselves: text inputs and selectize containers for dropdowns */
+        .main-content-card input[type='text'], 
+        .main-content-card input[type='number'], 
+        .main-content-card .selectize-control {
+            height: calc(1.5em + 1rem + 2px); /* Standard Bootstrap input height (for V5) */
+            border-radius: 0.375rem; /* Standard Bootstrap border radius */
+            border: 1px solid #ced4da; /* Ensure a visible border */
+            margin-bottom: 15px; /* Add margin below the input/dropdown box */
+        }
+        
+        /* The shiny-input-container wrapper (for uniform spacing) */
+        .shiny-input-container {
+            padding-left: 0;
+            padding-right: 0;
+        }
+        
+        /* Dropdown specific fix */
+        .selectize-control .selectize-input {
+            height: 100%; /* Fill the container height */
+            padding-top: 0.5rem; /* Match the vertical padding of text inputs */
+            padding-bottom: 0.5rem;
+        }
+        .form-group {
+            margin-bottom: 15px; /* Adjust spacing between fields */
+        }
+
+        /* 🎯 FIX: Button Alignment and Emphasis */
+        /* Wrapper for aligning button to the right */
+        .confirm-submit-wrapper {
+            text-align: right; 
+            margin-top: 25px;
+            margin-bottom: 25px;
+            /* Clear float if the button is floated */
+            clear: both; 
+        }
+
+        /* Style all prominent buttons (Confirm and Submit) */
+        #confirm_municipality, #submit_application { 
+            font-weight: 600 !important;
+            padding: 10px 30px !important;
+            border-radius: 8px !important;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            border: none !important;
+            margin-left: 10px; /* Spacing between buttons if both are present */
+        }
+        
+        /* Style the Confirm button */
+        #confirm_municipality {
+            background-color: #008080 !important; 
+            color: white !important;
+        }
+
+        /* Style the Submit button (DepEd Red) */
+        #submit_application {
+            background-color: #b22222 !important; 
+            color: white !important;
+        }
     "))
   ),
   
@@ -238,7 +363,7 @@ html, body {
       tags$img(src = "deped_logo.png", id = "login_logo"), # put logo in /www
       shinyauthr::loginUI(
         id = "login",
-        title = "Please Log In",
+        title = "Please log in",
         user_title = "Username",
         pass_title = "Password",
         login_title = "Log In",
@@ -318,6 +443,10 @@ server <- function(input, output, session) {
       shinyjs::hide("login_panel_wrapper")
       shinyjs::show("logout_div") # <--- NEW: Show the floating logout button
       
+      # 🔥 SCROLL FIX INTEGRATION: Add class to body on successful login
+      # This re-enables the main page scroll as defined in the UI's CSS.
+      shinyjs::runjs("$('body').addClass('content-shown');")
+      
       # User is authenticated. Let's get their details.
       user_info <- credentials()$info 
       
@@ -350,6 +479,11 @@ server <- function(input, output, session) {
       }
     } else {
       # User is NOT authenticated (e.g., after logout or initially)
+      
+      # 🔥 SCROLL FIX INTEGRATION: Remove class from body on logout
+      # This hides the main page scroll, only showing the login screen.
+      shinyjs::runjs("$('body').removeClass('content-shown');")
+      
       shinyjs::show("login_panel_wrapper") # <--- ADD THIS LINE back for logout/initial state
       shinyjs::hide("main_content")
       shinyjs::hide("mgmt_content")
@@ -380,375 +514,363 @@ server <- function(input, output, session) {
   
   
   output$STRIDE3 <- renderUI({
-    # Custom styling
-    tags$div(
-      style = "width: 100%;",
-    page_navbar(title = div(
+    
+    # --- Helper function for Read-Only Text Input ---
+    # Since textInputRO is custom and might be flawed, we create a reliable one.
+    textInputRO_Custom <- function(inputId, label, value = "") {
+      # Use a standard textInput for the label/structure
+      div(
+        class = "form-group shiny-input-container",
+        tags$label(`for` = inputId, label),
+        tags$input(
+          id = inputId,
+          type = "text",
+          class = "form-control",
+          value = value,
+          readonly = "readonly" # Key to making it read-only
+        )
+      )
+    }
+    
+    # --- Step 1: Fix the Navigation Bar/Header Emphasis ---
+    app_title_div <- div(
       tags$span(
         strong("SPIMS Application Portal"),
-        style = "font-family: 'Poppins'; font-size: 1em; margin-bottom: 0.2em;"),"",
-    ),
-    nav_spacer(),
-    nav_panel(strong("School Preference Selection"), fluidRow(
-      layout_columns(
-        card(
-          card_header(
-            div(strong("Applicant School Preferences"), style = "font-family: 'Poppins'; font-size: 30px; color: #111111; padding: 1px; text-align: center;"))
-        ),
-        card(
-          card_header(
-            div(
-              strong("Step 1: Enter Applicant Code"),
-              br(),
-              em("Please enter your applicant code. Your name, province, and level will be automatically filled.")
-            )
-          ),
-          card_body(
-            fluidRow(
-              column(4,
-                     textInput("applicant_code", "Applicant Control Code:*", placeholder = "ex: 000000"),
-              ),
-              column(8,)
-            ),
-            fluidRow(
-              column(4,
-                     textInputRO("user_name", "Name:*")),
-              column(4,
-                     textInputRO("user_level","Level:*")),
-              column(4,
-                     textInputRO("user_prov", "Province:*"))
-            ),
-          )
-        ),
-        card(
-          card_header(
-            div(
-              strong("Step 2: Enter Preferred Municiaplity"),
-              br(),
-              em("Select your preferred municipality. You may also select up to 2 additional municipalities near you, but this is not required."))
-          ),
-          card_body(
-            fluidRow(
-              column(4,
-                     uiOutput("MunSelection1")
-              ),
-              column(4,
-                     uiOutput("MunSelection2")
-              ),
-              column(4,
-                     uiOutput("MunSelection3")
-              )
-            ),
-            actionButton("munconfirm", strong("Confirm Municipality Selection"), class = "btn-success")
-          )
-        ),
-        
-        card(height = 700,
-             card_header(
-               div(
-                 strong("Step 3: Select School from the map or the dropdown",
-                        br(),
-                        em("You must fill out all required fields to view schools."))
-               )
-             ),
-             fluidRow(
-               column(width=5, 
-                      selectInput("school1", "First Preferred School:", choices = c("")),
-                      selectInput("school2", "Second Preferred School:", choices = c("")),
-                      selectInput("school3", "Third Preferred School:", choices = c("")),
-                      selectInput("school4", "Fourth Preferred School:", choices = c("")),
-                      selectInput("school5", "Fifth Preferred School:", choices = c("")),
-                      actionButton("clear_selections", "Clear All Selections", class = "btn-danger")
-               ),
-               column(width=7,
-                      leafletOutput("SPIMSMapping", height = "590px")
-               )
-             )
-             
-        ),
-        card(height = 75,
-             actionButton("submitBtn", strong("Submit Preferences"), class = "btn-success")
-        ),
-        #card(height = 300,
-        #      uiOutput("survey_check")
-        
-        #),
-        col_widths = c(12,12,12,12,12)))),
+        class = "app-title-text"
+      )
+    )
     
-    nav_panel(strong("Frequently Asked Questions"), #We should also add groupings for the questions to make it easier to navigate
+    # --- Step 2: Structure the Body to be a Unified Card ---
+    
+    tagList(
+      # THE CRITICAL FIX: Ensure all nav_panels are inside the page_navbar call
+      page_navbar(
+        title = app_title_div,
+        nav_spacer(),
+        
+        # ===================================
+        # Nav Panel 1: School Preference Selection (The main form)
+        # ===================================
+        nav_panel(
+          strong("School Preference Selection"), 
+          
+          # --- START: The Unified Card Body ---
+          # The main-content-card class (from your CSS) unifies the form.
+          div(class = "main-content-card", style = "margin-top: -20px;", 
+              
+              # The main title inside the card
+              h2("Applicant School Preferences"), 
+              
               fluidRow(
-                layout_columns(
-                  col_widths = c(12),  # Single full-width column for FAQ title
-                  card(
-                    card_header(
-                      div(
-                        strong("Frequently Asked Questions"),
-                        style = "font-family: Century Gothic; font-size: 30px; color: #111111; padding: 1px; text-align: center;"
+                # Step 1: Enter Applicant Code
+                div(class = "step-section",
+                    h4(strong("Step 1: Enter Applicant Code"), 
+                       em(" (Please enter your applicant code. Your name, province, and level will be automatically filled.)")),
+                    fluidRow(
+                      column(4, textInput("applicant_code", "Applicant Control Code:*", placeholder = "ex: 000000")),
+                      column(8,)
+                    ),
+                    fluidRow(
+                      # Use the custom read-only function for proper label display
+                      column(4, textInputRO_Custom("user_name", "Name:*")),
+                      column(4, textInputRO_Custom("user_level","Level:*")),
+                      column(4, textInputRO_Custom("user_prov", "Province:*"))
+                    )
+                ),
+                
+                # Add a separator line for visual flow
+                tags$hr(),
+                
+                # Step 2: Enter Preferred Municipality
+                div(class = "step-section",
+                    h4(strong("Step 2: Enter Preferred Municipality"),
+                       em(" (Select your preferred municipality. You may also select up to 2 additional municipalities near you, but this is not required.)")),
+                    fluidRow(
+                      column(4, uiOutput("MunSelection1")),
+                      column(4, uiOutput("MunSelection2")),
+                      column(4, uiOutput("MunSelection3"))
+                    ),
+                    actionButton("munconfirm", strong("Confirm Municipality Selection"), class = "btn-success")
+                ),
+                
+                tags$hr(),
+                
+                # Step 3: Select School
+                div(class = "step-section",
+                    h4(strong("Step 3: Select School from the map or the dropdown"),
+                       em(" (You must fill out all required fields to view schools.)")),
+                    fluidRow(
+                      column(width=5, 
+                             selectInput("school1", "First Preferred School:", choices = c("")),
+                             selectInput("school2", "Second Preferred School:", choices = c("")),
+                             selectInput("school3", "Third Preferred School:", choices = c("")),
+                             selectInput("school4", "Fourth Preferred School:", choices = c("")),
+                             selectInput("school5", "Fifth Preferred School:", choices = c("")),
+                             actionButton("clear_selections", "Clear All Selections", class = "btn-danger")
+                      ),
+                      column(width=7,
+                             leafletOutput("SPIMSMapping", height = "590px")
                       )
                     )
-                  )
+                ),
+                
+                tags$hr(),
+                
+                # Submit Button
+                div(class = "submit-section",
+                    actionButton("submitBtn", strong("Submit Preferences"), class = "btn-success")
                 )
-              ),
+              ) # End of main fluidRow (content inside card)
+              
+          ) # End of main-content-card for School Selection
+        ), # <--- **THIS IS WHERE THE PARENTHESIS WAS MOVED TO FIX THE NAV BARS**
+        
+        # ===================================
+        # Nav Panel 2: Frequently Asked Questions
+        # ===================================
+        nav_panel(
+          strong("Frequently Asked Questions"),
+          # Apply the 'main-content-card' here too for unification.
+          div(class = "main-content-card",
+              # REPLACED card_header WITH SIMPLE h2/h3 TO MATCH THE MAIN TAB STYLE
+              h2(strong("Frequently Asked Questions"), style = "text-align: center;"), 
               fluidRow(
                 layout_columns(
                   width = 12,
                   tags$div(
                     class = "accordion", id = "faqAccordion",
+                    # The accordion content is preserved below:
                     
-                    # Q1
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq1",
-                                       strong("What will serve as my endorsement letter to the Schools Division Office (SDO)?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq1",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "An email will be sent to you, indicating the SDO assignment, initial process, and required documents for the hiring process. This email serves as the official endorsement letter to the Schools Division."
-                               )
-                             )
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq1",
+                                                                 strong("What will serve as my endorsement letter to the Schools Division Office (SDO)?")
+                                                               )
                     ),
-                    
-                    # Q2
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq2",
-                                       strong("What are the application requirements I need to submit to the SDO?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq2",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 tagList(
-                                   "In reference to DepEd Order No. 007, s. 2023 and DepEd Order No. 021 s. 2024 the following are the required documents:",
-                                   tags$ul(
-                                     tags$li("Duly accomplished PDS (CS Form No. 212, Revised 2017) with Work Experience Sheet, if applicable;"),
-                                     tags$li("Photocopy of valid and updated PRC License/ID;"),
-                                     tags$li("Photocopy of scholastic/academic records such as but not limited to Transcript of Records (TOR) and Diploma;"),
-                                     tags$li("Photocopy of Certificate/s of Training, if applicable;"),
-                                     tags$li("Photocopy of Certificate of Employment, Contract of Service, or duly signed service record, whichever is/are applicable;"),
-                                     tags$li("Other documents as may be required by the HRMPSB for comparative assessment.")
-                                   ))
-                               )
-                             )
+                    tags$div(
+                      id = "faq1",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "An email will be sent to you, indicating the SDO assignment, initial process, and required documents for the hiring process. This email serves as the official endorsement letter to the Schools Division."
+                      )
+                    )
                     ),
-                    # Q3
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq3",
-                                       strong("Where should I submit the required documents?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq3",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "The documents/requirements should be submitted to your respective SDOs to facilitate the next steps of hiring and assessment according to the instructions set by the Division Office."
-                               )
-                             )
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq2",
+                                                                 strong("What are the application requirements I need to submit to the SDO?")
+                                                               )
                     ),
-                    # Q4
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq4",
-                                       strong("What will be my next step after I submit my initial documents to the SDO?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq4",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "After submitting your documents, you will need to wait for the confirmation of your SDO, as well as the information on the set timeline for the hiring and assessment process."
-                               )
-                             )
+                    tags$div(
+                      id = "faq2",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        tagList(
+                          "In reference to DepEd Order No. 007, s. 2023 and DepEd Order No. 021 s. 2024 the following are the required documents:",
+                          tags$ul(
+                            tags$li("Duly accomplished PDS (CS Form No. 212, Revised 2017) with Work Experience Sheet, if applicable;"),
+                            tags$li("Photocopy of valid and updated PRC License/ID;"),
+                            tags$li("Photocopy of scholastic/academic records such as but not limited to Transcript of Records (TOR) and Diploma;"),
+                            tags$li("Photocopy of Certificate/s of Training, if applicable;"),
+                            tags$li("Photocopy of Certificate of Employment, Contract of Service, or duly signed service record, whichever is/are applicable;"),
+                            tags$li("Other documents as may be required by the HRMPSB for comparative assessment.")
+                          ))
+                      )
+                    )
                     ),
-                    # Q5
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq5",
-                                       strong("Do I need to undergo the regular hiring process?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq5",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "You are required to undergo the regular hiring process. Regardless of the assessment score obtained, you will still be hired and deployed in DepEd."
-                               )
-                             )
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq3",
+                                                                 strong("Where should I submit the required documents?")
+                                                               )
                     ),
-                    # Q6
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq6",
-                                       strong("Do I still qualify for priority hiring?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq6",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "Yes. As a beneficiary, you are a priority over regular applicants for hiring and deployment for a Teacher I Plantilla Item. "
-                               )
-                             )
+                    tags$div(
+                      id = "faq3",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "The documents/requirements should be submitted to your respective SDOs to facilitate the next steps of hiring and assessment according to the instructions set by the Division Office."
+                      )
+                    )
                     ),
-                    # Q7
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq7",
-                                       strong("What alternative modes of assessment can be applied to me if I am still abroad?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq7",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "You may be assessed through alternative modes, such as online interviews, virtual assessments, or submitting required documents electronically subject to the arrangement of SDO."
-                               )
-                             )
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq4",
+                                                                 strong("What will be my next step after I submit my initial documents to the SDO?")
+                                                               )
                     ),
-                    # Q8
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq8",
-                                       strong("If I fail to undergo the assessment process, can I still be accommodated?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq8",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "No. It is required for you to undergo the assessment process as stipulated in DO No. 007, s. 2023 and DO No. 021, s. 2024."
-                               )
-                             )
+                    tags$div(
+                      id = "faq4",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "After submitting your documents, you will need to wait for the confirmation of your SDO, as well as the information on the set timeline for the hiring and assessment process."
+                      )
+                    )
                     ),
-                    # Q9
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq9",
-                                       strong("What happens if I fail to report to the SDO until August 29, 2025?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq9",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "The allotted teaching item for you shall be deemed as WAIVED. As a consequence, you will not be allowed to re-apply for the SPIMS Program."
-                               )
-                             )
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq5",
+                                                                 strong("Do I need to undergo the regular hiring process?")
+                                                               )
                     ),
-                    # Q10
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq10",
-                                       strong("What happens if the SDO is unable to contact me?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq10",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "The SDO will exhaust all means to contact you. But you are also responsible to coordinate diligently with the SDO. However, if the SDO is unable to establish communication with you, the teaching item allotted for you shall be deemed waived."
-                               )
-                             )
+                    tags$div(
+                      id = "faq5",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "You are required to undergo the regular hiring process. Regardless of the assessment score obtained, you will still be hired and deployed in DepEd."
+                      )
+                    )
                     ),
-                    # Q11
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq11",
-                                       strong("Can I re-apply if I waive or refuse my appointment?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq11",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 "No. The SPIMS Program does not allow for a re-application once you waive your privilege as a beneficiary. However, should you later decide to apply as a DepEd teacher, you will need to go through the regular hiring process without priority hiring."
-                               )
-                             )
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq6",
+                                                                 strong("Do I still qualify for priority hiring?")
+                                                               )
                     ),
-                    # Q12
-                    tags$div(class = "accordion-item",
+                    tags$div(
+                      id = "faq6",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "Yes. As a beneficiary, you are a priority over regular applicants for hiring and deployment for a Teacher I Plantilla Item. "
+                      )
+                    )
+                    ),
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq7",
+                                                                 strong("What alternative modes of assessment can be applied to me if I am still abroad?")
+                                                               )
+                    ),
+                    tags$div(
+                      id = "faq7",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "You may be assessed through alternative modes, such as online interviews, virtual assessments, or submitting required documents electronically subject to the arrangement of SDO."
+                      )
+                    )
+                    ),
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq8",
+                                                                 strong("If I fail to undergo the assessment process, can I still be accommodated?")
+                                                               )
+                    ),
+                    tags$div(
+                      id = "faq8",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "No. It is required for you to undergo the assessment process as stipulated in DO No. 007, s. 2023 and DO No. 021, s. 2024."
+                      )
+                    )
+                    ),
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq9",
+                                                                 strong("What happens if I fail to report to the SDO until August 29, 2025?")
+                                                               )
+                    ),
+                    tags$div(
+                      id = "faq9",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "The allotted teaching item for you shall be deemed as WAIVED. As a consequence, you will not be allowed to re-apply for the SPIMS Program."
+                      )
+                    )
+                    ),
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq10",
+                                                                 strong("What happens if the SDO is unable to contact me?")
+                                                               )
+                    ),
+                    tags$div(
+                      id = "faq10",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        "The SDO will exhaust all means to contact you. But you are also responsible to coordinate diligently with the SDO. However, if the SDO is unable to establish communication with you, the teaching item allotted for you shall be deemed waived."
+                      )
+                    )
+                    ),
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq11",
+                                                                 strong("Can I re-apply if I waive or refuse my appointment?")
+                                                               )
+                    ),
+                    tags$div(
+                      id = "faq11",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color = #111111; text-align: left;",
+                        "No. The SPIMS Program does not allow for a re-application once you waive your privilege as a beneficiary. However, should you later decide to apply as a DepEd teacher, you will need to go through the regular hiring process without priority hiring."
+                      )
+                    )
+                    ),
+                    tags$div(class = "accordion-item", 
                              tags$h2(class = "accordion-header",
                                      tags$button(
                                        class = "accordion-button collapsed",
@@ -766,49 +888,62 @@ server <- function(input, output, session) {
                                  class = "accordion-body",
                                  style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
                                  "Yes. You can request a change in school assignment following the provided matrix.",
+                                 # Replace with actual image path or use an image tag if using shiny::includeHTML
                                  tags$img(
-                                   src = "schoolchange.jpg",  # Replace with actual image path
+                                   src = "schoolchange.jpg", 
                                    style = "max-width: 100%; height: auto; margin-bottom: 15px;"
                                  )
                                )
                              )
                     ),
-                    # Q13
-                    tags$div(class = "accordion-item",
-                             tags$h2(class = "accordion-header",
-                                     tags$button(
-                                       class = "accordion-button collapsed",
-                                       type = "button",
-                                       `data-bs-toggle` = "collapse",
-                                       `data-bs-target` = "#faq13",
-                                       strong("Which Office should I contact regarding Teaching Kit concerns?")
-                                     )
-                             ),
-                             tags$div(
-                               id = "faq13",
-                               class = "accordion-collapse collapse",
-                               `data-bs-parent` = "#faqAccordion",
-                               tags$div(
-                                 class = "accordion-body",
-                                 style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
-                                 HTML("You are advised to coordinate with Department of Migrant Workers (DMW). Below is DMW’s contact information:
-
-<br/>Facebook Pages: SPIMS NRCO and NRCO Central
-<br/>Telephone Number: (02) 8722-11-61
-<br/>Email Address: spims@dmw.gov.ph")
-                               )
-                             )
+                    tags$div(class = "accordion-item", tags$h2(class = "accordion-header",
+                                                               tags$button(
+                                                                 class = "accordion-button collapsed",
+                                                                 type = "button",
+                                                                 `data-bs-toggle` = "collapse",
+                                                                 `data-bs-target` = "#faq13",
+                                                                 strong("Which Office should I contact regarding Teaching Kit concerns?")
+                                                               )
                     ),
-                    col_widths = c(-3,6,3,-1,10,-1,-1,10,-1,-1,10,-1))))),
-    
-    nav_panel(strong("Contact Us"),
-              fluidRow(
-                layout_columns(
-                  HTML('<img src="Contactus.png" width="100%" height="auto">')
-                )
+                    tags$div(
+                      id = "faq13",
+                      class = "accordion-collapse collapse",
+                      `data-bs-parent` = "#faqAccordion",
+                      tags$div(
+                        class = "accordion-body",
+                        style = "font-family: Helvetica; font-size: 18px; color: #111111; text-align: left;",
+                        HTML("You are advised to coordinate with Department of Migrant Workers (DMW). Below is DMW’s contact information:
+                          
+                          <br/>Facebook Pages: SPIMS NRCO and NRCO Central
+                          <br/>Telephone Number: (02) 8722-11-61
+                          <br/>Email Address: spims@dmw.gov.ph")
+                      )
+                    )
+                    )
+                  ) # End of accordion div
+                ) # End of layout_columns
+              ) # End of fluidRow
+          ) # End of main-content-card for FAQ
+        ),
+        
+        # ===================================
+        # Nav Panel 3: Contact Us Panel
+        # ===================================
+        nav_panel(
+          strong("Contact Us"),
+          div(class = "main-content-card", # Apply the card style here too
+              layout_columns(
+                HTML('<img src="Contactus.png" width="100%" height="auto">')
               )
-    ),
-    nav_panel(strong("Submit a Query"),
+          )
+        ),
+        
+        # ===================================
+        # Nav Panel 4: Submit a Query Panel
+        # ===================================
+        nav_panel(
+          strong("Submit a Query"),
+          div(class = "main-content-card", # Apply the card style here too
               fluidRow(
                 column(
                   width = 12,
@@ -822,19 +957,22 @@ server <- function(input, output, session) {
                   )
                 )
               )
-    ),
-    nav_item(
-      tags$div(
-        style = "display: flex; align-items: center; margin-right: 10px;",
-        shinyauthr::logoutUI(
-          id = "logout",
-          label = "Log Out",
-          class = "btn btn-danger btn-sm"
-        )
-      )
-    )
-    )
-    )# Custom styling
+          )
+        ),
+        
+        # Logout button (This is fine as is)
+        nav_item(
+          tags$div(
+            style = "display: flex; align-items: center; margin-right: 10px;",
+            shinyauthr::logoutUI(
+              id = "logout",
+              label = "Log Out",
+              class = "btn btn-danger btn-sm"
+            )
+          )
+        ) 
+      ) # End of page_navbar
+    ) # End of tagList
   })
   
   
@@ -1472,7 +1610,7 @@ server <- function(input, output, session) {
         conn <- get_db_conn()
         
         # Save submission with the correct column names
-        dbExecute(conn, "INSERT INTO entries (user_name, applicant_code, school1_id, school2_id, school3_id, school4_id, school5_id, user_prov, user_mun, user_level)
+        dbExecute(conn, "INSERT INTO entries (user_name, applicant_code, school1, school2, school3, school4, school5, user_prov, user_mun, user_level)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                   params = list(input$user_name, input$applicant_code, input$school1, input$school2, input$school3, input$school4, input$school5, input$user_prov, input$user_mun, input$user_level))
         
@@ -1590,6 +1728,7 @@ server <- function(input, output, session) {
   
   #Value box output from number of submissons
   output$submission_number <- renderValueBox({
+    input$final_confirmation 
     # Connect to the SQLite database using the same db_path as init_db
     conn <- dbConnect(RSQLite::SQLite(), db_path)
     
@@ -1664,14 +1803,14 @@ server <- function(input, output, session) {
         # A helper function to get the school name from an ID
         get_school_name <- function(school_id, data) {
           if (is.null(school_id) || school_id == "") {
-            return(NA) # Return NA if the input is empty
+            return("N/A - Not Selected") # Return NA if the input is empty
           }
           
           # Find the row in the data with the matching SchoolID and return its SchoolName
           school_name <- data$SchoolName[data$SchoolID == school_id]
           
           if (length(school_name) == 0) {
-            return(NA) # Return NA if no match is found
+            return("School ID Not Found") # Return NA if no match is found
           }
           
           return(school_name)
